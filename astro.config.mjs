@@ -14,7 +14,10 @@ export default defineConfig({
 				light: './src/assets/logo-light.svg',
 				dark: './src/assets/logo-dark.svg',
 			},
-			social: [{ icon: 'gitlab', label: 'Source', href: 'https://git.lyra.pub/lyra/lyra' }],
+			social: [
+				{ icon: 'gitlab', label: 'Source', href: 'https://git.lyra.pub/lyra/lyra' },
+				{ icon: 'discord', label: 'Discord', href: 'https://discord.gg/AvYTcZYzJh' },
+			],
 			plugins: [
 				starlightThemeBlack({
 					navLinks: [
