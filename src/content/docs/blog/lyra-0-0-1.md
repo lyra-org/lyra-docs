@@ -26,6 +26,10 @@ That includes the REST and plugin APIs, which will change constantly during the 
 
 For configuration and getting started with Lyra, we recommend the built-in website. It doesn't support all of the server's features yet, but it's good enough for daily use. We plan to create our own mobile app at some point, but we aren't in any rush. The official OpenSubsonic and Jellyfin plugins let you use any mobile app that supports either one, and the ecosystem is so vast that you're sure to find something that matches your tastes. I recommend Finamp: it has been tested against Lyra's Jellyfin support, and I've been using it for years.
 
+:::caution
+Lyra doesn't support every Jellyfin and OpenSubsonic feature. If an app misbehaves with Lyra, report it to us on our [issue tracker](https://git.lyra.pub/lyra/lyra/-/issues) or [Discord](https://discord.gg/AvYTcZYzJh) first, not to the app's developers.
+:::
+
 ## Track chains and mixes
 
 Shuffle has always had one flaw: it doesn't know that some songs belong together. Track chains fix that. Link tracks that flow into each other, and Lyra plays them as one unit, in order, whenever it shuffles or builds a mix. Lyra doesn't detect chains on its own, so you create them from an album's page in the web interface.
