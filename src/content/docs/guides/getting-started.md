@@ -21,6 +21,10 @@ services:
       - lyra-data:/data
       - lyra-plugins:/plugins
       - /path/to/music:/music:ro
+    # environment:
+    #   # Only if nobody untrusted can reach Lyra before you create the first
+    #   # account: skips the setup code. See "Create the first account" below.
+    #   LYRA_REQUIRE_SETUP_CODE: "false"
 
 volumes:
   lyra-data:
@@ -52,9 +56,23 @@ docker compose up -d
 
 On bind mounts, this changes host ownership to the mapped IDs.
 
-## Add your music
+## Create the first account
 
-Open [http://localhost:4746](http://localhost:4746) and create an account. The first account is the administrator. If Lyra runs on another computer, replace `localhost` with its address.
+The first account is the administrator, so Lyra asks for a setup code to prove that you run the server. It prints the code in its log when it starts:
+
+```sh
+docker compose logs lyra
+```
+
+Look for the line that says no admin account exists; it ends with the code. Open [http://localhost:4746](http://localhost:4746), enter the code, and choose a username and password. If Lyra runs on another computer, replace `localhost` with its address.
+
+The code changes each time Lyra starts and stops working once the account exists.
+
+:::caution[Skipping the setup code]
+Setting `LYRA_REQUIRE_SETUP_CODE` to `false` lets the first account be created without the code. Without it, whoever reaches a new server first becomes its administrator, so only do this when nobody untrusted can reach Lyra before you create the account, such as on your home network. The setting matters again whenever Lyra starts with no administrator, for example with a new data volume.
+:::
+
+## Add your music
 
 Lyra then asks which [plugins](/guides/plugins/) to install. Install at least the MusicBrainz plugin: Lyra relies on a metadata provider to match your library accurately. Then add a library with `/music` as its path.
 

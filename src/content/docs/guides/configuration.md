@@ -161,6 +161,7 @@ Certbot's `live` folder holds links into its `archive` folder, so mount the whol
 | `LYRA_PORT` | `4746` | Listening port; overrides `port` from the file |
 | `LYRA_TLS_CERT` | unset | PEM certificate to [serve HTTPS](#serve-https-without-a-reverse-proxy) with; overrides `tls.cert` from the file |
 | `LYRA_TLS_KEY` | unset | PEM private key for that certificate; overrides `tls.key` from the file |
+| `LYRA_REQUIRE_SETUP_CODE` | `true` | Whether [creating the first account](/guides/getting-started/#create-the-first-account) takes the setup code from the log; `true` or `false`, anything else stops startup. With `false`, anyone who can reach a server with no administrator can become one |
 | `LYRA_PLUGINS_DIR` | `./plugins` | Directory plugins are loaded from; created when serving |
 | `LYRA_STATIC_DIR` | searched | Directory for static web assets; must be a directory when set |
 | `RUST_LOG` | `lyra_server=info,tower_http=debug,harmony_core=info` | Log filter; request logs name query parameters without their values, which log at `lyra::http::query=trace` only when that target is named |
