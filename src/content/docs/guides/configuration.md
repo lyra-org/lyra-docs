@@ -112,13 +112,42 @@ Only the selected header is read. If your proxy sends only `X-Real-IP` or only `
 
 If every client still counts as one address inside the proxy's subnet, such as `172.30.5.1`, Docker is hiding client addresses from the proxy itself, as rootless Docker does by default. That is fixed in Docker's networking, not in Lyra.
 
+## Serve HTTPS without a reverse proxy
+
+A reverse proxy is the usual way to put Lyra on HTTPS. Without one, Lyra can serve HTTPS itself from a certificate and key you supply. It does not obtain or renew certificates.
+
+Mount the folder holding them and name both files in `config.json`:
+
+```yaml
+      - /path/to/certs:/certs:ro
+```
+
+```json
+{
+  "tls": {
+    "cert": "/certs/fullchain.pem",
+    "key": "/certs/privkey.pem"
+  }
+}
+```
+
+Run `docker compose up -d` to apply it, then open `https://` on the same port as before.
+
+- Both files are PEM. `cert` holds your certificate followed by any intermediate certificates, and `key` holds its private key, which must not be password-protected.
+- Lyra runs as `1000:1000` and must be able to read both files.
+- The port serves HTTPS only once these are set. A request sent as plain HTTP gets `400 Bad Request`.
+- A renewed certificate is picked up within 30 seconds, without a restart. If the new files cannot be used, Lyra keeps serving the previous certificate and logs a warning.
+- Lyra will not start when only one of the two is set, or when the files cannot be read or do not belong together.
+
+Certbot's `live` folder holds links into its `archive` folder, so mount the whole `/etc/letsencrypt` folder, not `live` alone.
+
 ## Advanced reference
 
 ### File loading and defaults
 
 - Lyra searches for `config.json` in the working directory, beside the binary, and in the binary's parent directory. `LYRA_CONFIG_PATH` selects an exact file; it must exist.
 - Unknown keys and invalid values prevent startup. The error identifies the problem.
-- `port` and `db` are startup options. Other settings use the file value first, then the saved value, then the default.
+- `port`, `db` and `tls` are startup options. Other settings use the file value first, then the saved value, then the default.
 - In the file, `null` explicitly unsets `published_url` or `hls.temp_disk_budget_bytes`. Other settings reject `null`, except startup options, which treat it as omitted.
 - Most setting changes apply immediately. `rate_limit.*` and `hls.cleanup_startup_purge` require a restart.
 
@@ -130,6 +159,8 @@ If every client still counts as one address inside the proxy's subnet, such as `
 | `LYRA_DATA_DIR` | `./data` | Root for server-owned state; created when serving |
 | `LYRA_DB_DIR` | data dir | Directory for relative `db.path` values; created when serving |
 | `LYRA_PORT` | `4746` | Listening port; overrides `port` from the file |
+| `LYRA_TLS_CERT` | unset | PEM certificate to [serve HTTPS](#serve-https-without-a-reverse-proxy) with; overrides `tls.cert` from the file |
+| `LYRA_TLS_KEY` | unset | PEM private key for that certificate; overrides `tls.key` from the file |
 | `LYRA_PLUGINS_DIR` | `./plugins` | Directory plugins are loaded from; created when serving |
 | `LYRA_STATIC_DIR` | searched | Directory for static web assets; must be a directory when set |
 | `RUST_LOG` | `lyra_server=info,tower_http=debug,harmony_core=info` | Log filter; request logs name query parameters without their values, which log at `lyra::http::query=trace` only when that target is named |
